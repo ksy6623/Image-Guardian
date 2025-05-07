@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Guardian - 분석 결과</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .result-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .image-comparison {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .image-box {
+            width: 48%;
+            min-width: 300px;
+            text-align: center;
+        }
+        .image-box img {
+            max-width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .ssim-result {
+            text-align: center;
+            font-size: 18px;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .ai-test-result {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .fail {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .chart-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .chart-container img {
+            max-width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .back-link {
+            display: block;
+            margin: 20px auto;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            width: 200px;
+        }
+        .back-link:hover {
+            background-color: #2980b9;
+        }
+        .criteria-info {
+            background-color: #f8f9fa;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        .action-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #2980b9;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .action-btn:hover {
+            background-color: #3498db;
+        }
+        .action-btn i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ Image Guardian</h1>
+        <p>이미지 분석 결과</p>
+    </div>
+
+    <div class="result-container">
+        <h2>이미지 비교 분석</h2>
+
+        <div class="image-comparison">
+            <div class="image-box">
+                <h3>원본 이미지</h3>
+                <img src="{{ result.original }}" alt="원본 이미지">
+            </div>
+            <div class="image-box">
+                <h3>보호된 이미지</h3>
+                <img src="{{ result.protected }}" alt="보호된 이미지">
+            </div>
+        </div>
+
+        <div class="ssim-result">
+            📊 SSIM: {{ result.ssim }}
+            <span style="color: {{ result.ssim_interpretation.color }}">
+                ({{ result.ssim_interpretation.grade }}: {{ result.ssim_interpretation.description }})
+            </span>
+        </div>
+
+        <div class="ai-test-result">
+            <h3>AI 인식 테스트 결과</h3>
+            <p>AI 인식 확률: {{ "%.2f"|format(result.ai_test.confidence * 100) }}%</p>
+            <p>보호 상태:
+                {% if result.ai_test.protection_success %}
+                    <span class="success">성공 <i class="fas fa-check-circle"></i> (AI가 이미지를 제대로 인식하지 못함)</span>
+                {% else %}
+                    <span class="fail">실패 <i class="fas fa-times-circle"></i> (AI가 이미지를 여전히 인식함)</span>
+                {% endif %}
+            </p>
+            <div class="criteria-info">
+                <strong>판정 기준:</strong> AI 인식 확률이 50% 미만일 때 보호 성공, 50% 이상일 때 보호 실패
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3>이미지 분석 차트</h3>
+            <img src="{{ result.chart }}" alt="이미지 분석 차트">
+        </div>
+
+        <div class="action-buttons">
+            <a href="http://127.0.0.1:5000/" class="action-btn">
+                <i class="fas fa-shield-alt"></i> 다른 이미지 보호하기
+            </a>
+        </div>
+    </div>
+
+    <a href="{{ url_for('index') }}" class="back-link">새 이미지 업로드</a>
+    <a href="{{ url_for('presentation') }}" class="back-link">종합 분석 결과 보기</a>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Guardian</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            text-align: center;
+        }
+        input[type="file"], input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .thumb {
+            margin: 15px;
+            text-align: center;
+        }
+        .thumb img {
+            max-width: 180px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .ssim-score {
+            font-size: 14px;
+            color: #222;
+            margin-top: 5px;
+        }
+        label {
+            font-weight: bold;
+        }
+        /* 새로 추가된 스타일 */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        .action-btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #17a2b8;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        .action-btn:hover {
+            background-color: #138496;
+        }
+        .action-btn i {
+            margin-right: 8px;
+        }
+        .action-info {
+            text-align: center;
+            margin-top: 10px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🛡️ 이미지 보호 도구 - Image Guardian</h1>
+
+    {% if protect_success %}
+        <div class="success-message">
+            <i class="fas fa-check-circle"></i> 보호가 완료되었습니다!
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <label for="images">보호할 이미지 선택 (여러 개 가능):</label>
+        <input type="file" name="images" id="images" multiple accept="image/*" required>
+
+        <input type="submit" value="보호 적용" class="btn">
+    </form>
+
+    <!-- 이미지 분석 도구로 연결되는 버튼 추가 -->
+    <div class="action-buttons">
+        <a href="http://127.0.0.1:5001/" class="action-btn">
+            <i class="fas fa-chart-bar"></i> 이미지 비교 분석하기
+        </a>
+    </div>
+    <p class="action-info">
+        원본과 보호된 이미지를 자세히 분석하려면 위 버튼을 클릭하세요
+    </p>
+
+    {% if results %}
+        <h2 style="margin-top: 30px; text-align: center; color: #28a745;">
+            <i class="fas fa-check-square"></i> 보호된 이미지
+        </h2>
+        <div class="gallery">
+            {% for item in results %}
+                <div class="thumb">
+                    <p>원본</p>
+                    <img src="{{ item.original }}" alt="Original Image">
+                    <p>보호된</p>
+                    <img src="{{ item.protected }}" alt="Protected Image">
+                    <p class="ssim-score">🧪 SSIM: {{ item.ssim }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
